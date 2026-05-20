@@ -1,1 +1,32 @@
-a
+<!DOCTYPE html>
+<html>
+<body>
+  <h2>¿Cómo podemos ayudarte?</h2>
+  <button onclick="seleccionarOpcion('Soporte Urgente', true)">Soporte Urgente</button>
+  <button onclick="seleccionarOpcion('Estatus Pedido', false)">Estatus de Pedido</button>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbxRHNj0eLzStaeZdraAJQSF3AuMobgkZVTfTvX1WoE1uSlxLZZcgk7lswFlutjXy3Gv/exec"; // Pega aquí la URL que copiaste
+    
+    async function seleccionarOpcion(opcion, esUrgente) {
+      const payload = {
+        apiKey: "MI_CLAVE_123", // Debe coincidir con la hoja ACCESOS
+        opcion: opcion,
+        urgente: esUrgente,
+        clienteId: "Web_" + Date.now()
+      };
+
+      const res = await fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+      
+      const result = await res.json();
+      if(result.status === "success") {
+        alert("Redirigiendo a WhatsApp...");
+        window.location.href = "https://wa.me/52XXXXXXXXXX?text=Hola+quiero+" + encodeURIComponent(opcion);
+      }
+    }
+  </script>
+</body>
+</html>
