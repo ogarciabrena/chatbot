@@ -3,351 +3,491 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot Automatizado - Alguipres</title>
+    <title>WhatsApp Business - Alguipres Automation</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            background-color: #f4f6f9;
+            background-color: #dadbd4;
+            background-image: linear-gradient(180deg, #dddbd1, #d2dbdc);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
         }
 
-        .chat-container {
+        .phone-container {
             width: 100%;
-            max-width: 420px;
-            height: 650px;
-            background-color: #ffffff;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 410px;
+            height: 720px;
+            background-color: #efeae2;
+            border-radius: 24px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            border: 1px solid #e1e4e8;
+            position: relative;
+            border: 6px solid #222;
         }
 
-        /* Cabecera del Chat */
-        .chat-header {
-            background: linear-gradient(135deg, #007bff, #0056b3);
+        /* Cabecera estilo WhatsApp */
+        .wa-header {
+            background-color: #008069;
             color: white;
-            padding: 20px;
-            text-align: center;
-            font-size: 1.2rem;
-            font-weight: bold;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 15px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 10;
         }
 
-        .chat-header span {
-            display: block;
-            font-size: 0.8rem;
+        .wa-header .avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #fff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.3rem;
+            color: #008069;
+        }
+
+        .wa-header .status {
+            font-size: 0.75rem;
             font-weight: normal;
-            opacity: 0.8;
-            margin-top: 4px;
+            opacity: 0.9;
+            display: block;
+            margin-top: 2px;
         }
 
-        /* Área de Mensajes */
-        .chat-messages {
+        /* Pantalla de Chat / Mensajes */
+        .chat-screen {
             flex: 1;
-            padding: 20px;
+            padding: 15px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            background-color: #fdfdfd;
+            gap: 10px;
+            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); /* Fondo clásico WA */
+            background-size: contain;
         }
 
-        .message {
+        .msg-bubble {
             max-width: 85%;
-            padding: 12px 16px;
-            border-radius: 18px;
-            font-size: 0.95rem;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.92rem;
             line-height: 1.4;
-            animation: fadeIn 0.3s ease-in-out;
+            position: relative;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .bot-message {
-            background-color: #f0f2f5;
-            color: #1c1e21;
+        .received {
+            background-color: #ffffff;
             align-self: flex-start;
-            border-top-left-radius: 4px;
+            border-top-left-radius: 0;
         }
 
-        .user-message {
-            background-color: #007bff;
-            color: white;
+        .sent {
+            background-color: #d9fdd3;
             align-self: flex-end;
-            border-top-right-radius: 4px;
+            border-top-right-radius: 0;
         }
 
-        /* Enlaces dentro del Chat */
-        .info-link {
-            color: #007bff;
+        .time {
+            font-size: 0.65rem;
+            color: #667781;
+            text-align: right;
+            margin-top: 4px;
+            display: block;
+        }
+
+        /* Enlaces e Interactivos */
+        .wa-link {
+            color: #027eb5;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* MÓDULOS DINÁMICOS (Formularios, Tablas, Mostrador) */
+        .dynamic-module {
+            background: white;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 8px;
+            border-left: 4px solid #008069;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
+        /* 1. Formulario Soporte */
+        .form-group {
+            margin-bottom: 8px;
+        }
+        .form-group label {
+            font-size: 0.75rem;
             font-weight: bold;
-            text-decoration: underline;
-            display: inline-block;
-            margin: 5px 0;
+            color: #54656f;
+            display: block;
+            margin-bottom: 3px;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            outline: none;
         }
 
-        .user-message .info-link {
-            color: #fff;
+        /* 2. Base de Datos / GS Grid */
+        .db-status {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            margin-top: 8px;
+        }
+        .db-badge {
+            background-color: #e1f5fe;
+            color: #0288d1;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
         }
 
-        /* Botones de Opciones */
-        .options-container {
+        /* 3. Mostrador / Productos */
+        .mostrador-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .product-card {
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            padding: 6px;
+            text-align: center;
+            background: #fff;
+            cursor: grab;
+            user-select: none;
+            transition: transform 0.2s;
+        }
+        .product-card:active { cursor: grabbing; transform: scale(0.95); }
+        .product-card img { width: 100%; height: 50px; object-fit: cover; border-radius: 4px; }
+        .product-card p { font-size: 0.75rem; font-weight: bold; margin-top: 4px; }
+
+        /* Barra Inferior de Entrada */
+        .wa-footer {
+            background-color: #f0f2f5;
+            padding: 10px 14px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            margin-top: 12px;
-        }
-
-        .option-btn {
-            background-color: #ffffff;
-            border: 1.5px solid #007bff;
-            color: #007bff;
-            padding: 10px 14px;
-            border-radius: 25px;
-            cursor: pointer;
-            text-align: left;
-            font-size: 0.88rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .option-btn:hover {
-            background-color: #007bff;
-            color: white;
-            transform: translateY(-1px);
-        }
-
-        /* Zona de Entrada de Texto y Drop */
-        .chat-footer {
-            padding: 15px;
-            background-color: #ffffff;
+            gap: 5px;
             border-top: 1px solid #e1e4e8;
         }
 
-        .input-wrapper {
+        .input-bar {
             display: flex;
-            gap: 10px;
             align-items: center;
+            gap: 8px;
         }
 
-        .chat-input {
+        .wa-input {
             flex: 1;
-            padding: 12px 18px;
-            border: 1px solid #ccd0d5;
-            border-radius: 24px;
+            padding: 10px 16px;
+            background-color: #ffffff;
+            border: none;
+            border-radius: 20px;
             outline: none;
             font-size: 0.95rem;
-            transition: border-color 0.2s;
         }
 
-        .chat-input:focus {
-            border-color: #007bff;
-        }
-
-        .send-btn {
-            background-color: #007bff;
+        .send-icon {
+            background-color: #008069;
             color: white;
             border: none;
-            width: 42px;
-            height: 42px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 1.1rem;
-            transition: background 0.2s, transform 0.1s;
         }
 
-        .send-btn:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
-        }
-
-        /* Zona de Arrastre Drop Indicator */
-        .drag-instruction {
-            font-size: 0.75rem;
-            color: #8a8d91;
-            text-align: center;
-            margin-top: 8px;
-            border: 1px dashed #ccd0d5;
-            padding: 6px;
-            border-radius: 8px;
-            background-color: #f8f9fa;
-            transition: all 0.3s ease;
-        }
-
-        .drag-active {
-            border-color: #007bff;
+        /* Zona Drop Unificada */
+        .drop-zone-info {
+            border: 2px dashed #008069;
             background-color: #e7f3ff;
-            color: #007bff;
+            color: #008069;
+            font-size: 0.75rem;
+            text-align: center;
+            padding: 8px;
+            border-radius: 8px;
+            display: none;
             font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-<div class="chat-container">
-    <!-- Encabezado -->
-    <div class="chat-header">
-        Asistente Virtual Alguipres
-        <span>Respuesta Automática 24/7</span>
-    </div>
-
-    <!-- Contenedor de Mensajes -->
-    <div id="chatMessages" class="chat-messages">
-        <!-- Mensaje Inicial de Bienvenida -->
-        <div class="message bot-message">
-            ¡Hola! Bienvenido al chat de <strong>Alguipres</strong>. 🤖
-            <br><br>
-            Para consultar de forma inmediata todas las opciones, catálogos y detalles de la empresa, por favor ingresa a nuestro sitio central aquí:
-            <br>
-            👉 <a href="https://ejemplo-alguipres.com/opciones" target="_blank" class="info-link">Ver Opciones de la Empresa</a>
-            <br><br>
-            O selecciona una de las solicitudes más comunes directamente:
-            
-            <div class="options-container">
-                <button class="option-btn" onclick="triggerOption('Conocer a los Dueños')">👤 Ver información de los Dueños</button>
-                <button class="option-btn" onclick="triggerOption('Buscar Orden')">🔍 Buscar u ordenar pedido</button>
-                <button class="option-btn" onclick="triggerOption('Enviar Correo')">✉️ Enviar un correo electrónico</button>
-            </div>
+<div class="phone-container">
+    <!-- Header -->
+    <div class="wa-header">
+        <div class="avatar">🏢</div>
+        <div>
+            Alguipres S.A.
+            <span class="status">Cuenta de empresa • En línea</span>
         </div>
     </div>
 
-    <!-- Formulario de Entrada y Zona de Arrastre -->
-    <div class="chat-footer">
-        <div class="input-wrapper">
-            <input type="text" id="userInput" class="chat-input" placeholder="Escribe aquí o arrastra un mensaje..." onkeypress="checkEnter(event)">
-            <button class="send-btn" onclick="processUserMessage()">➔</button>
+    <!-- Pantalla del Chat -->
+    <div id="chatScreen" class="chat-screen">
+        
+        <!-- Mensaje de entrada simulado (Trigger de entrada) -->
+        <div class="msg-bubble sent">
+            Hola, requiero informes de la empresa.
+            <span class="time">09:00 AM</span>
         </div>
-        <div id="dropZone" class="drag-instruction">
-            Envía un mensaje o arrastra y suelta un archivo aquí
+
+        <!-- Respuesta Automática Inmediata -->
+        <div class="msg-bubble received">
+            ¡Hola! Gracias por comunicarte con <strong>Alguipres</strong>. 🤖 Accede a nuestro portal central automatizado para resolver tu solicitud al instante:
+            <br><br>
+            🔗 <span class="wa-link" onclick="openCentralHub()">alguipres.bot/menu-interactivo</span>
+            <br><br>
+            <em>Haz clic en el enlace de arriba para desplegar los módulos automáticos.</em>
+            <span class="time">09:01 AM</span>
+        </div>
+
+        <!-- Aquí se cargarán dinámicamente los módulos de respuesta -->
+        <div id="dynamicTarget"></div>
+
+    </div>
+
+    <!-- Input Fijo WhatsApp y Dropzone -->
+    <div class="wa-footer">
+        <div id="dropZone" class="drop-zone-info">
+            ¡Suelta el elemento o mensaje aquí para enviarlo!
+        </div>
+        <div class="input-bar">
+            <input type="text" id="waInput" class="wa-input" placeholder="Escribe un mensaje..." onkeypress="checkKey(event)">
+            <button class="send-icon" onclick="sendCustomMessage()">➔</button>
         </div>
     </div>
 </div>
 
 <script>
-    const chatMessages = document.getElementById('chatMessages');
-    const userInput = document.getElementById('userInput');
+    const chatScreen = document.getElementById('chatScreen');
+    const dynamicTarget = document.getElementById('dynamicTarget');
+    const waInput = document.getElementById('waInput');
     const dropZone = document.getElementById('dropZone');
 
-    // Procesar y enviar el mensaje del input de texto
-    function processUserMessage() {
-        const text = userInput.value.trim();
-        if (text === '') return;
+    // Al hacer clic en el enlace, simula cargar los triggers de la empresa
+    function openCentralHub() {
+        dynamicTarget.innerHTML = `
+            <div class="msg-bubble received" style="width:100%; max-width:100%;">
+                <strong>🎛️ Centro Automatizado Alguipres</strong><br>
+                Selecciona la opción de tu interés para cargar la herramienta correspondiente:
+                <br><br>
+                🛠️ <span class="wa-link" onclick="loadModule('soporte')">[1] Soporte Técnico e Incidentes</span><br><br>
+                📦 <span class="wa-link" onclick="loadModule('orden')">[2] Validar Estado de Orden (Live DB/GS)</span><br><br>
+                🏪 <span class="wa-link" onclick="loadModule('mostrador')">[3] Solicitar Informes de Producto (Mostrador)</span>
+                <span class="time">Justo ahora</span>
+            </div>
+        `;
+        chatScreen.scrollTop = chatScreen.scrollHeight;
+    }
 
-        displayMessage(text, 'user-message');
-        userInput.value = '';
+    // Carga de módulos específicos según la selección
+    function loadModule(type) {
+        let content = "";
 
-        // Simular retraso de respuesta del Bot
+        if (type === 'soporte') {
+            content = `
+                <div class="msg-bubble received" style="width:100%; max-width:100%;">
+                    <strong>🛠️ Formulario de Soporte Técnico</strong>
+                    <div class="dynamic-module">
+                        <div class="form-group">
+                            <label>Nombre Completo:</label>
+                            <input type="text" id="spName" placeholder="Tu nombre...">
+                        </div>
+                        <div class="form-group">
+                            <label>Tu Correo Electrónico:</label>
+                            <input type="email" id="spEmail" placeholder="correo@ejemplo.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Describa el problema o arrastre aquí su mensaje:</label>
+                            <textarea id="spMsg" rows="2" placeholder="Detalles o arrastre aquí..."></textarea>
+                        </div>
+                        <button onclick="submitSoporteMail()" style="background:#008069; color:white; border:none; padding:6px 12px; border-radius:4px; font-size:0.8rem; cursor:pointer; width:100%;">Enviar Datos por Correo</button>
+                    </div>
+                    <span class="time">Asistente</span>
+                </div>
+            `;
+        } 
+        else if (type === 'orden') {
+            content = `
+                <div class="msg-bubble received" style="width:100%; max-width:100%;">
+                    <strong>📦 Consulta de Órdenes en Tiempo Real</strong>
+                    <div class="dynamic-module">
+                        <p style="font-size:0.8rem; margin-bottom:6px; color:#54656f;">Se conecta mediante API segura a Google Sheets o Database central.</p>
+                        <div style="display:flex; gap:5px;">
+                            <input type="text" id="orderId" placeholder="Ej: ALGUI-9943" style="flex:1; padding:6px; border:1px solid #ccc; border-radius:4px; font-size:0.8rem;">
+                            <button onclick="queryDatabase()" style="background:#008069; color:white; border:none; padding:6px 10px; border-radius:4px; font-size:0.8rem; cursor:pointer;">Consultar GS</button>
+                        </div>
+                        <div id="dbResult"></div>
+                    </div>
+                    <span class="time">Asistente</span>
+                </div>
+            `;
+        } 
+        else if (type === 'mostrador') {
+            content = `
+                <div class="msg-bubble received" style="width:100%; max-width:100%;">
+                    <strong>🏪 Mostrador Digital Alguipres</strong>
+                    <p style="font-size:0.8rem; color:#54656f; margin-top:4px;">Arrastra un producto hacia la barra de texto inferior para pedir cotización o informes inmediatos.</p>
+                    
+                    <div class="mostrador-grid">
+                        <div class="product-card" draggable="true" ondragstart="dragProduct(event, '📦 Producto A: Laptop Alguipres Pro')">
+                            <img src="https://picsum.photos/id/0/100/60" alt="Laptop">
+                            <p>Laptop Pro Alguipres</p>
+                        </div>
+                        <div class="product-card" draggable="true" ondragstart="dragProduct(event, '📱 Producto B: Smartphone Alguipres X')">
+                            <img src="https://picsum.photos/id/160/100/60" alt="Celular">
+                            <p>Smartphone X</p>
+                        </div>
+                    </div>
+                    <span class="time">Asistente</span>
+                </div>
+            `;
+        }
+
+        // Agregar la burbuja interactiva al chat
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = content;
+        chatScreen.appendChild(wrapper);
+        chatScreen.scrollTop = chatScreen.scrollHeight;
+        initDragAndDrop();
+    }
+
+    // Enviar datos de soporte simulando envío de correo electrónico
+    function submitSoporteMail() {
+        const name = document.getElementById('spName').value;
+        const mail = document.getElementById('spEmail').value;
+        const msg = document.getElementById('spMsg').value;
+
+        if(!name || !mail || !msg) {
+            alert("Por favor rellene los datos o arrastre su consulta.");
+            return;
+        }
+
+        appendUserMsg(`Enviando ticket... <br>👤 ${name} <br>✉️ ${mail} <br>📝 Mensaje: ${msg}`);
         setTimeout(() => {
-            generateBotReply(text);
-        }, 700);
+            appendBotMsg("📧 <strong>¡Correo Enviado!</strong> Tus datos se recopilaron con éxito. El equipo técnico te contactará a " + mail);
+        }, 800);
     }
 
-    // Detectar si presiona Enter en el input
-    function checkEnter(event) {
-        if (event.key === 'Enter') {
-            processUserMessage();
-        }
-    }
+    // Simulación de conexión a base de datos / Google Sheets
+    function queryDatabase() {
+        const orderId = document.getElementById('orderId').value.trim();
+        const dbResult = document.getElementById('dbResult');
+        if(!orderId) return;
 
-    // Al hacer clic en los botones de accesos directos
-    function triggerOption(optionName) {
-        displayMessage(optionName, 'user-message');
+        dbResult.innerHTML = "<p style='font-size:0.75rem; color:gray; margin-top:5px;'>🔄 Consultando Google Sheets API...</p>";
+
         setTimeout(() => {
-            generateBotReply(optionName);
-        }, 700);
+            dbResult.innerHTML = `
+                <div class="db-status">
+                    <strong>📡 Estado DB:</strong> Encontrado <br>
+                    <strong>ID Orden:</strong> ${orderId.toUpperCase()}<br>
+                    <strong>Estatus:</strong> <span class="db-badge">En Ruta de Entrega</span><br>
+                    <strong>Destino:</strong> Almacén Central
+                </div>
+            `;
+            chatScreen.scrollTop = chatScreen.scrollHeight;
+        }, 1000);
     }
 
-    // Insertar burbujas de chat en el DOM
-    function displayMessage(text, typeClass) {
-        const msgDiv = document.createElement('div');
-        msgDiv.className = `message ${typeClass}`;
-        msgDiv.innerHTML = text;
-        chatMessages.appendChild(msgDiv);
-        
-        // Auto-scroll al último mensaje
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+    // Funciones básicas de Mensajería manual
+    function sendCustomMessage() {
+        const text = waInput.value.trim();
+        if(!text) return;
+        appendUserMsg(text);
+        waInput.value = "";
     }
 
-    // Lógica del Bot con respuestas condicionales
-    function generateBotReply(rawText) {
-        let response = "";
-        const text = rawText.toLowerCase();
+    function checkKey(e) { if(e.key === 'Enter') sendCustomMessage(); }
 
-        if (text.includes('dueño') || text.includes('dueños') || text.includes('conocer')) {
-            response = "👤 <strong>Información Corporativa:</strong> La empresa Alguipres pertenece a sus socios fundadores principales. Puedes consultar la junta directiva y organigrama completo en este enlace de nuestra transparencia empresarial: <a href='#' class='info-link'>Directorio de Propietarios</a>.";
-        } 
-        else if (text.includes('orden') || text.includes('buscar') || text.includes('pedido')) {
-            response = "🔍 <strong>Rastreo e Historial:</strong> Para buscar tu orden o estatus de envío actual, ingresa a nuestro <a href='#' class='info-link'>Portal de Seguimiento de Órdenes</a> e introduce tu ID de cliente.";
-        } 
-        else if (text.includes('correo') || text.includes('enviar') || text.includes('email')) {
-            response = "✉️ <strong>Soporte Directo:</strong> Puedes redactar y enviar un correo electrónico directamente a nuestra bandeja de atención al cliente: <strong>soporte@alguipres.fake.com</strong>. Nuestro tiempo estimado de respuesta es menor a 24 horas.";
-        } 
-        else if (text.includes('[archivo]')) {
-            response = "📂 <strong>Archivo Recibido:</strong> He procesado el elemento que arrastraste. Lo hemos enviado al departamento correspondiente para su revisión. ¿Deseas consultar algo más?";
-        }
-        else {
-            response = "Entendido. Recuerda que puedes visualizar la plataforma general con todas las opciones en nuestro enlace principal: <a href='https://ejemplo-alguipres.com/opciones' target='_blank' class='info-link'>Ecosistema Alguipres</a>, o bien solicitar datos sobre los 'Dueños', 'Buscar Orden' o 'Enviar Correo'.";
-        }
-
-        displayMessage(response, 'bot-message');
+    function appendUserMsg(text) {
+        const div = document.createElement('div');
+        div.className = "msg-bubble sent";
+        div.innerHTML = `${text} <span class="time">Ahora</span>`;
+        chatScreen.appendChild(div);
+        chatScreen.scrollTop = chatScreen.scrollHeight;
     }
 
-    /* --- LÓGICA DE DRAG & DROP (ARRASTRAR Y SOLTAR MENSJES/ARCHIVOS) --- */
-    
-    // Al arrastrar un archivo sobre la zona del chat
-    window.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dropZone.classList.add('drag-active');
-        dropZone.innerText = "¡Suéltalo para enviarlo al Chatbot!";
-    });
+    function appendBotMsg(text) {
+        const div = document.createElement('div');
+        div.className = "msg-bubble received";
+        div.innerHTML = `${text} <span class="time">Ahora</span>`;
+        chatScreen.appendChild(div);
+        chatScreen.scrollTop = chatScreen.scrollHeight;
+    }
 
-    // Al salir de la zona de arrastre
-    window.addEventListener('dragleave', (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('drag-active');
-        dropZone.innerText = "Envía un mensaje o arrastra y suelta un archivo aquí";
-    });
+    /* --- GESTIÓN DRAG & DROP AVANZADA --- */
+    let draggedData = "";
 
-    // Al soltar el archivo/texto arrastrado
-    window.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('drag-active');
-        dropZone.innerText = "Envía un mensaje o arrastra y suelta un archivo aquí";
+    function dragProduct(ev, text) {
+        draggedData = text;
+        ev.dataTransfer.setData("text/plain", text);
+    }
 
-        const files = e.dataTransfer.files;
-        const draggedText = e.dataTransfer.getData("text");
+    function initDragAndDrop() {
+        // Habilitar zonas globales para arrastrar en el contenedor
+        window.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.display = "block";
+        });
 
-        if (files.length > 0) {
-            // Si arrastró un archivo local
-            const fileName = files[0].name;
-            displayMessage(`📁 <em>Archivo arrastrado: ${fileName}</em>`, 'user-message');
-            setTimeout(() => {
-                generateBotReply('[archivo]');
-            }, 700);
-        } else if (draggedText) {
-            // Si arrastró un texto copiado desde otra pestaña/documento
-            userInput.value = draggedText;
-            processUserMessage();
-        }
-    });
+        window.addEventListener('dragleave', (e) => {
+            // Ocultar si sale de los márgenes inferiores
+            if(e.clientY < 500) dropZone.style.display = "none";
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.display = "none";
+            
+            const data = e.dataTransfer.getData("text") || draggedData;
+            
+            if (data) {
+                // Comportamiento 1: Si hay formulario abierto y se arrastra allí
+                const txtArea = document.getElementById('spMsg');
+                if (txtArea && document.activeElement === txtArea || txtArea) {
+                     txtArea.value = data;
+                }
+                
+                // Comportamiento 2: Enviar como mensaje al chat si se suelta abajo
+                appendUserMsg(`Solicito informes sobre: <strong>${data}</strong>`);
+                setTimeout(() => {
+                    appendBotMsg(`📋 <strong>Mostrador Alguipres:</strong> Has solicitado información de <em>${data}</em>. Un agente comercial te enviará la cotización formal por este chat.`);
+                }, 800);
+            }
+        });
+    }
 </script>
 
 </body>
