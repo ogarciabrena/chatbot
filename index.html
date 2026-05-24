@@ -1,32 +1,354 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Automatizado - Alguipres</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 420px;
+            height: 650px;
+            background-color: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #e1e4e8;
+        }
+
+        /* Cabecera del Chat */
+        .chat-header {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .chat-header span {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: normal;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        /* Área de Mensajes */
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background-color: #fdfdfd;
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bot-message {
+            background-color: #f0f2f5;
+            color: #1c1e21;
+            align-self: flex-start;
+            border-top-left-radius: 4px;
+        }
+
+        .user-message {
+            background-color: #007bff;
+            color: white;
+            align-self: flex-end;
+            border-top-right-radius: 4px;
+        }
+
+        /* Enlaces dentro del Chat */
+        .info-link {
+            color: #007bff;
+            font-weight: bold;
+            text-decoration: underline;
+            display: inline-block;
+            margin: 5px 0;
+        }
+
+        .user-message .info-link {
+            color: #fff;
+        }
+
+        /* Botones de Opciones */
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .option-btn {
+            background-color: #ffffff;
+            border: 1.5px solid #007bff;
+            color: #007bff;
+            padding: 10px 14px;
+            border-radius: 25px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 0.88rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .option-btn:hover {
+            background-color: #007bff;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* Zona de Entrada de Texto y Drop */
+        .chat-footer {
+            padding: 15px;
+            background-color: #ffffff;
+            border-top: 1px solid #e1e4e8;
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 18px;
+            border: 1px solid #ccd0d5;
+            border-radius: 24px;
+            outline: none;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+
+        .chat-input:focus {
+            border-color: #007bff;
+        }
+
+        .send-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.1rem;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .send-btn:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        /* Zona de Arrastre Drop Indicator */
+        .drag-instruction {
+            font-size: 0.75rem;
+            color: #8a8d91;
+            text-align: center;
+            margin-top: 8px;
+            border: 1px dashed #ccd0d5;
+            padding: 6px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .drag-active {
+            border-color: #007bff;
+            background-color: #e7f3ff;
+            color: #007bff;
+            font-weight: bold;
+        }
+    </style>
+</head>
 <body>
-  <h2>¿Cómo podemos ayudarte?</h2>
-  <button onclick="seleccionarOpcion('Soporte Urgente', true)">Soporte Urgente</button>
-  <button onclick="seleccionarOpcion('Estatus Pedido', false)">Estatus de Pedido</button>
 
-  <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxRHNj0eLzStaeZdraAJQSF3AuMobgkZVTfTvX1WoE1uSlxLZZcgk7lswFlutjXy3Gv/exec"; // Pega aquí la URL que copiaste
-    
-    async function seleccionarOpcion(opcion, esUrgente) {
-      const payload = {
-        apiKey: "MI_CLAVE_123", // Debe coincidir con la hoja ACCESOS
-        opcion: opcion,
-        urgente: esUrgente,
-        clienteId: "Web_" + Date.now()
-      };
+<div class="chat-container">
+    <!-- Encabezado -->
+    <div class="chat-header">
+        Asistente Virtual Alguipres
+        <span>Respuesta Automática 24/7</span>
+    </div>
 
-      const res = await fetch(API_URL, {
-        method: "POST",
-        body: JSON.stringify(payload)
-      });
-      
-      const result = await res.json();
-      if(result.status === "success") {
-        alert("Redirigiendo a WhatsApp...");
-        window.location.href = "https://wa.me/52XXXXXXXXXX?text=Hola+quiero+" + encodeURIComponent(opcion);
-      }
+    <!-- Contenedor de Mensajes -->
+    <div id="chatMessages" class="chat-messages">
+        <!-- Mensaje Inicial de Bienvenida -->
+        <div class="message bot-message">
+            ¡Hola! Bienvenido al chat de <strong>Alguipres</strong>. 🤖
+            <br><br>
+            Para consultar de forma inmediata todas las opciones, catálogos y detalles de la empresa, por favor ingresa a nuestro sitio central aquí:
+            <br>
+            👉 <a href="https://ejemplo-alguipres.com/opciones" target="_blank" class="info-link">Ver Opciones de la Empresa</a>
+            <br><br>
+            O selecciona una de las solicitudes más comunes directamente:
+            
+            <div class="options-container">
+                <button class="option-btn" onclick="triggerOption('Conocer a los Dueños')">👤 Ver información de los Dueños</button>
+                <button class="option-btn" onclick="triggerOption('Buscar Orden')">🔍 Buscar u ordenar pedido</button>
+                <button class="option-btn" onclick="triggerOption('Enviar Correo')">✉️ Enviar un correo electrónico</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulario de Entrada y Zona de Arrastre -->
+    <div class="chat-footer">
+        <div class="input-wrapper">
+            <input type="text" id="userInput" class="chat-input" placeholder="Escribe aquí o arrastra un mensaje..." onkeypress="checkEnter(event)">
+            <button class="send-btn" onclick="processUserMessage()">➔</button>
+        </div>
+        <div id="dropZone" class="drag-instruction">
+            Envía un mensaje o arrastra y suelta un archivo aquí
+        </div>
+    </div>
+</div>
+
+<script>
+    const chatMessages = document.getElementById('chatMessages');
+    const userInput = document.getElementById('userInput');
+    const dropZone = document.getElementById('dropZone');
+
+    // Procesar y enviar el mensaje del input de texto
+    function processUserMessage() {
+        const text = userInput.value.trim();
+        if (text === '') return;
+
+        displayMessage(text, 'user-message');
+        userInput.value = '';
+
+        // Simular retraso de respuesta del Bot
+        setTimeout(() => {
+            generateBotReply(text);
+        }, 700);
     }
-  </script>
+
+    // Detectar si presiona Enter en el input
+    function checkEnter(event) {
+        if (event.key === 'Enter') {
+            processUserMessage();
+        }
+    }
+
+    // Al hacer clic en los botones de accesos directos
+    function triggerOption(optionName) {
+        displayMessage(optionName, 'user-message');
+        setTimeout(() => {
+            generateBotReply(optionName);
+        }, 700);
+    }
+
+    // Insertar burbujas de chat en el DOM
+    function displayMessage(text, typeClass) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `message ${typeClass}`;
+        msgDiv.innerHTML = text;
+        chatMessages.appendChild(msgDiv);
+        
+        // Auto-scroll al último mensaje
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Lógica del Bot con respuestas condicionales
+    function generateBotReply(rawText) {
+        let response = "";
+        const text = rawText.toLowerCase();
+
+        if (text.includes('dueño') || text.includes('dueños') || text.includes('conocer')) {
+            response = "👤 <strong>Información Corporativa:</strong> La empresa Alguipres pertenece a sus socios fundadores principales. Puedes consultar la junta directiva y organigrama completo en este enlace de nuestra transparencia empresarial: <a href='#' class='info-link'>Directorio de Propietarios</a>.";
+        } 
+        else if (text.includes('orden') || text.includes('buscar') || text.includes('pedido')) {
+            response = "🔍 <strong>Rastreo e Historial:</strong> Para buscar tu orden o estatus de envío actual, ingresa a nuestro <a href='#' class='info-link'>Portal de Seguimiento de Órdenes</a> e introduce tu ID de cliente.";
+        } 
+        else if (text.includes('correo') || text.includes('enviar') || text.includes('email')) {
+            response = "✉️ <strong>Soporte Directo:</strong> Puedes redactar y enviar un correo electrónico directamente a nuestra bandeja de atención al cliente: <strong>soporte@alguipres.fake.com</strong>. Nuestro tiempo estimado de respuesta es menor a 24 horas.";
+        } 
+        else if (text.includes('[archivo]')) {
+            response = "📂 <strong>Archivo Recibido:</strong> He procesado el elemento que arrastraste. Lo hemos enviado al departamento correspondiente para su revisión. ¿Deseas consultar algo más?";
+        }
+        else {
+            response = "Entendido. Recuerda que puedes visualizar la plataforma general con todas las opciones en nuestro enlace principal: <a href='https://ejemplo-alguipres.com/opciones' target='_blank' class='info-link'>Ecosistema Alguipres</a>, o bien solicitar datos sobre los 'Dueños', 'Buscar Orden' o 'Enviar Correo'.";
+        }
+
+        displayMessage(response, 'bot-message');
+    }
+
+    /* --- LÓGICA DE DRAG & DROP (ARRASTRAR Y SOLTAR MENSJES/ARCHIVOS) --- */
+    
+    // Al arrastrar un archivo sobre la zona del chat
+    window.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('drag-active');
+        dropZone.innerText = "¡Suéltalo para enviarlo al Chatbot!";
+    });
+
+    // Al salir de la zona de arrastre
+    window.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-active');
+        dropZone.innerText = "Envía un mensaje o arrastra y suelta un archivo aquí";
+    });
+
+    // Al soltar el archivo/texto arrastrado
+    window.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-active');
+        dropZone.innerText = "Envía un mensaje o arrastra y suelta un archivo aquí";
+
+        const files = e.dataTransfer.files;
+        const draggedText = e.dataTransfer.getData("text");
+
+        if (files.length > 0) {
+            // Si arrastró un archivo local
+            const fileName = files[0].name;
+            displayMessage(`📁 <em>Archivo arrastrado: ${fileName}</em>`, 'user-message');
+            setTimeout(() => {
+                generateBotReply('[archivo]');
+            }, 700);
+        } else if (draggedText) {
+            // Si arrastró un texto copiado desde otra pestaña/documento
+            userInput.value = draggedText;
+            processUserMessage();
+        }
+    });
+</script>
+
 </body>
 </html>
